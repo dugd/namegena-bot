@@ -11,12 +11,13 @@
     "start": "node dist/bot.js",
     "debug": "nodemon --exec node --inspect-brk=0.0.0.0:9229 --require ts-node/register src/bot.ts",
     "docker:build": "docker build -t telegram-bot .",
-    "docker:run": "docker run telegram-bot"
+    "docker:run": "docker compose up"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.2",
     "@types/node-telegram-bot-api": "^0.64.11",
+    "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"

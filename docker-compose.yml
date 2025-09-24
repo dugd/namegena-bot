@@ -4,13 +4,13 @@ services:
   telegram-bot:
     build: 
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "${APP_PORT}:${APP_PORT}"
       - "9229:9229"
     environment:
       - NODE_ENV=${NODE_ENV}
-      - BOT_TOKEN=${BOT_TOKEN}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
       - WEBHOOK_URL=${WEBHOOK_URL}
       - APP_PORT=${APP_PORT}
     volumes:

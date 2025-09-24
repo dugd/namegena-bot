@@ -18,4 +18,7 @@ RUN npm run build
 
 EXPOSE 8080
 
+HEALTHCHECK --interval=3s --timeout=3s --start-period=5s --retries=3 \
+    CMD node dist/health-check.js
+
 CMD ["node", "dist/bot.js"]
