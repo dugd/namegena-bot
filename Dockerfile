@@ -8,8 +8,14 @@ ENV APP_ENV = development
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install $(test "$BUILD_ENV" = "production" && echo "--production")
+COPY tsconfig.json ./
+
+RUN npm ci $(test "$BUILD_ENV" = "production" && echo "--production") && npm cache clean --force
 
 COPY . .
 
-CMD ["node", "bot.js"]
+RUN npm run build
+
+EXPOSE 8080
+
+CMD ["node", "dist/bot.js"]

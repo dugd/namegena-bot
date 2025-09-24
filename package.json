@@ -4,21 +4,26 @@
   "description": "",
   "license": "ISC",
   "author": "",
-  "type": "module",
   "main": "bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon --exec ts-node src/bot.ts",
+    "build": "tsc",
+    "start": "node dist/bot.js",
+    "debug": "nodemon --exec node --inspect-brk=0.0.0.0:9229 --require ts-node/register src/bot.ts",
+    "docker:build": "docker build -t telegram-bot .",
+    "docker:run": "docker run telegram-bot"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.2",
     "@types/node-telegram-bot-api": "^0.64.11",
     "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   },
   "dependencies": {
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
-    "node-telegram-bot-api": "^0.66.0"
+    "node-telegram-bot-api": "^0.63.0"
   }
 }

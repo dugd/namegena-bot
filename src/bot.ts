@@ -1,12 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import express from 'express';
 
-if (process.env.NODE_ENV !== 'production') {
-    const dotenv = await import('dotenv');
-    dotenv.config();
-}
-
-const { token, port } = await import('./config.js');
+import { token, port, webhookUrl } from './config';
 
 const bot = new TelegramBot(token!, { polling: false });
 
@@ -18,6 +13,15 @@ app.post(`/webhook/${token}`, (req, res) => {
     res.sendStatus(200);
 });
 
+app.get('/health', (req, res) => {
+    res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
 app.listen(port, () => {
+    if (process.env.NODE_ENV === 'production') {
+        bot.setWebHook(`${webhookUrl}/webhook/${token}`)
+            .then(() => console.log('Webhook set successfully'))
+            .catch(console.error);
+    }
     console.log(`Server is running on port ${port}`);
 });
