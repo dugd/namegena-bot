@@ -1,4 +1,5 @@
 import type { BotCommand } from '../types/bot';
+import { generateName } from '../service/genname';
 
 const startCommand: BotCommand = {
     command: 'start',
@@ -24,9 +25,9 @@ const genCommand: BotCommand = {
     description: 'Generate new name based on two names',
     pattern: /^\/gen\s+(\p{L}+)\s+(\p{L}+)\s*$/gu,
     async handler(ctx, match) {
-        const param1 = match?.[1] ?? '';
-        const param2 = match?.[2] ?? '';
-        await ctx.reply(`New name: ${param1}${param2}`);
+        const name1 = match?.[1] ?? '';
+        const name2 = match?.[2] ?? '';
+        await ctx.reply(`New name: ${generateName(name1, name2)}`);
     },
 };
 
