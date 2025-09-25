@@ -23,10 +23,17 @@ const helpCommand: BotCommand = {
 const genCommand: BotCommand = {
     command: 'gen',
     description: 'Generate new name based on two names',
-    pattern: /^\/gen\s+(\p{L}+)\s+(\p{L}+)\s*$/gu,
-    async handler(ctx, match) {
-        const name1 = match?.[1] ?? '';
-        const name2 = match?.[2] ?? '';
+    async handler(ctx) {
+        const match = ctx.message.text?.match(/^\/gen\s+(\p{L}+)\s+(\p{L}+)\s*$/gu);
+        match?.shift();
+        const name1 = match?.[0] ?? '';
+        const name2 = match?.[1] ?? '';
+        if (!name1 || !name2) {
+            await ctx.reply(
+                'Please provide two valid names. Usage: /gen [first_name] [second_name]',
+            );
+            return;
+        }
         await ctx.reply(`New name: ${generateName(name1, name2)}`);
     },
 };
