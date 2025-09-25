@@ -9,7 +9,7 @@ export interface Favorites {
     [userId: string]: FavoriteEntry[];
 }
 
-export interface FevoriteEntryInput {
+export interface FavoriteEntryInput {
     name_1: string;
     name_2: string;
     result: string;

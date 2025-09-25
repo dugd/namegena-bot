@@ -1,18 +1,16 @@
 import TelegramBot from 'node-telegram-bot-api';
 import { commands } from './commands';
-import type { LocalJSONStorage } from '../storage';
+import { FavoriteService } from '../service/favorite';
 import type { BotContext } from '../types/bot';
+import { LimitationResourceError, AlreadtyExistsError } from '../exceptions';
 
 export class TelegramBotService {
     private bot: TelegramBot;
-    private storage?: LocalJSONStorage;
+    private service: FavoriteService;
 
-    public setStorage(storage: LocalJSONStorage): void {
-        this.storage = storage;
-    }
-
-    constructor(token: string) {
+    constructor(token: string, service: FavoriteService) {
         this.bot = new TelegramBot(token, { polling: false });
+        this.service = service;
 
         this.setupCommands();
         this.setupHandlers();
@@ -62,10 +60,11 @@ export class TelegramBotService {
         this.bot.on('callback_query', async (query) => {
             const data = query.data;
             const msg = query.message;
-            if (!msg) {
+            if (!msg || !msg.from) {
                 await this.bot.answerCallbackQuery(query.id, { text: 'Invalid message.' });
                 return;
             }
+            const userId = String(msg.from.id);
 
             if (data && data.startsWith('save:')) {
                 const parts = data.split(':');
@@ -74,42 +73,33 @@ export class TelegramBotService {
                     const name2 = parts[2] as string;
                     const result = parts[3] as string;
 
-                    if (!this.storage) {
+                    if (!this.service.isInitialized()) {
                         await this.bot.sendMessage(msg.chat.id, 'Cannot save favorite.');
+                        await this.bot.answerCallbackQuery(query.id, {
+                            text: 'Error occurred.',
+                        });
                         console.error('Storage not set. Cannot save favorite.');
                         return;
                     }
-
-                    const data = (await this.storage.readData()) || {};
-                    const chatId = String(query.message?.chat.id);
-                    if (!data[chatId]) {
-                        data[chatId] = [];
-                    }
-                    if (data[chatId].length >= 10) {
-                        await this.bot.sendMessage(
-                            msg.chat.id,
-                            'You have reached the limit of 10 favorite entries.',
-                        );
+                    try {
+                        await this.service.addFavorite(userId, {
+                            name_1: name1,
+                            name_2: name2,
+                            result,
+                        });
+                    } catch (err) {
+                        if (
+                            err instanceof LimitationResourceError ||
+                            err instanceof AlreadtyExistsError
+                        ) {
+                            await this.bot.sendMessage(msg.chat.id, err.message);
+                        } else {
+                            await this.bot.sendMessage(msg.chat.id, 'Error saving favorite.');
+                            console.error('Error saving favorite:', err);
+                        }
+                        await this.bot.answerCallbackQuery(query.id, { text: 'Error occurred.' });
                         return;
                     }
-                    if (
-                        data[chatId].some(
-                            (entry) =>
-                                entry.name_1 === name1 &&
-                                entry.name_2 === name2 &&
-                                entry.result === result,
-                        )
-                    ) {
-                        await this.bot.sendMessage(msg.chat.id, 'This favorite already exists.');
-                        return;
-                    }
-                    data[chatId].push({
-                        name_1: name1,
-                        name_2: name2,
-                        result,
-                        created_at: new Date().toISOString(),
-                    });
-                    await this.storage.writeData(data);
                     await this.bot.sendMessage(msg.chat.id, 'Favorite saved!');
                 }
             }

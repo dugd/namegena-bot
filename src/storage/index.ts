@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs/promises';
 import { Favorites } from '../types/storage';
 import { isFavorites } from '../guard';
+import { DataFormatError } from '../exceptions';
 
 export class LocalJSONStorage {
     private filePath: string;
@@ -14,7 +15,7 @@ export class LocalJSONStorage {
         try {
             const data = JSON.parse(await fs.readFile(this.filePath, 'utf-8'));
             if (!isFavorites(data)) {
-                throw new Error('Data format is invalid');
+                throw new DataFormatError('Data format is invalid');
             }
             return data;
         } catch (error) {
