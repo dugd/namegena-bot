@@ -22,17 +22,17 @@ const helpCommand: BotCommand = {
 
 const genCommand: BotCommand = {
     command: 'gen',
-    pattern: /^\/gen\s+.*/,
+    pattern: /^\/gen(\s*)(.*)/u,
     description: 'Generate new name based on two names',
-    async handler(ctx) {
-        const match = ctx.message.text?.match(/^\/gen\s+(\p{L}+)\s+(\p{L}+)\s*$/gu);
-        match?.shift();
-        const name1 = match?.[0] ?? '';
-        const name2 = match?.[1] ?? '';
-        if (!name1 || !name2) {
-            await ctx.reply(
-                'Please provide two valid names. Usage: /gen [first_name] [second_name]',
-            );
+    async handler(ctx, match) {
+        const args = match?.[2]?.split(/\s+/) || [];
+        if (args.length < 2) {
+            await ctx.reply('Please provide two names. Usage: /gen [first_name] [second_name]');
+            return;
+        }
+        const [name1 = '', name2 = ''] = args;
+        if (!name1.match(/^\p{L}+$/u) || !name2.match(/^\p{L}+$/u)) {
+            await ctx.reply('Names must contain only alphabetic characters.');
             return;
         }
         await ctx.reply(`New name: ${generateName(name1, name2)}`);
