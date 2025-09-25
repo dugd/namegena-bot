@@ -3,7 +3,7 @@ FROM node:22 AS build
 COPY package*.json ./
 COPY tsconfig.json ./
 
-RUN npm ci
+RUN npm ci --include=dev
 
 COPY . .
 
