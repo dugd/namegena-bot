@@ -60,8 +60,20 @@ export class FavoriteService {
     }
 
     public async getFavorites(userId: string): Promise<FavoriteEntry[]> {
+        console.log('Getting favorites for user:', userId);
         if (!this.storage) throw new InitializationError('Storage not set');
 
         return this.data[userId] || [];
+    }
+
+    public static prettyPrintFavorites(data: FavoriteEntry[]): string {
+        return data
+            .map(
+                (entry, index) =>
+                    `${index + 1}. ${entry.name_1} + ${entry.name_2} = ${entry.result} (added on ${new Date(
+                        entry.created_at,
+                    ).toLocaleString()})`,
+            )
+            .join('\n');
     }
 }

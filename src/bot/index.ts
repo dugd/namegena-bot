@@ -45,6 +45,7 @@ export class TelegramBotService {
             message,
             from: message.from,
             chat: message.chat,
+            service: this.service,
             reply: (text: string, options?: any) =>
                 this.bot.sendMessage(message.chat.id, text, options),
         };
@@ -64,7 +65,7 @@ export class TelegramBotService {
                 await this.bot.answerCallbackQuery(query.id, { text: 'Invalid message.' });
                 return;
             }
-            const userId = String(msg.from.id);
+            const userId = String(query.from.id);
 
             if (data && data.startsWith('save:')) {
                 const parts = data.split(':');

@@ -1,5 +1,6 @@
 import type { BotCommand } from '../types/bot';
 import { generateName } from '../service/genname';
+import { FavoriteService } from '../service/favorite';
 
 const startCommand: BotCommand = {
     command: 'start',
@@ -15,7 +16,10 @@ const helpCommand: BotCommand = {
     async handler(ctx) {
         const helpText = `Available commands:
 /start - Start the bot
-/gen [first_name] [second_name] - Generate new name based on two names`;
+/gen [first_name] [second_name] - Generate new name based on two names
+/favorite - Show favorite names
+/help - Show this help message
+`;
         await ctx.reply(helpText);
     },
 };
@@ -47,4 +51,26 @@ const genCommand: BotCommand = {
     },
 };
 
-export const commands: BotCommand[] = [startCommand, helpCommand, genCommand];
+const favoriteCommand: BotCommand = {
+    command: 'favorite',
+    description: 'Show favorite names',
+    async handler(ctx) {
+        if (!ctx.service) {
+            await ctx.reply('Service not available.');
+            return;
+        }
+        if (!ctx.from) {
+            await ctx.reply('User information not available.');
+            return;
+        }
+        const favorites = await ctx.service.getFavorites(String(ctx.from.id));
+        if (favorites.length === 0) {
+            await ctx.reply('You have no favorite names.');
+            return;
+        }
+        const favoriteList = FavoriteService.prettyPrintFavorites(favorites);
+        await ctx.reply(`Your favorite names:\n${favoriteList}`);
+    },
+};
+
+export const commands: BotCommand[] = [startCommand, helpCommand, genCommand, favoriteCommand];
