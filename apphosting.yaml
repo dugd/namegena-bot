@@ -1,0 +1,12 @@
+env:
+    - variable: NODE_ENV
+      value: production
+
+    - variable: APP_ENV
+      value: production
+
+    - variable: WEBHOOK_API
+      secret: webHookApiSecret
+
+    - variable: TELEGRAM_TOKEN
+      secret: telegramTokenSecret
