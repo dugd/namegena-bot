@@ -23,7 +23,7 @@ COPY tsconfig.json ./
 
 RUN npm ci $(test "$BUILD_ENV" = "production" && echo "--production") && npm cache clean --force
 
-COPY --from=build ./dist /dist
+COPY --from=build /dist /app/dist
 
 EXPOSE 8000
 
