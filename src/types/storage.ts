@@ -8,3 +8,9 @@ export interface FavoriteEntry {
 export interface Favorites {
     [userId: string]: FavoriteEntry[];
 }
+
+export interface FevoriteEntryInput {
+    name_1: string;
+    name_2: string;
+    result: string;
+}

@@ -1,4 +1,10 @@
 import { Server } from './server';
-import { token, port, webhookUrl } from './config';
+import { TelegramBotService } from './bot';
+import { LocalJSONStorage } from './storage';
+import { token, port, webhookUrl, dbPath } from './config';
 
-new Server(token as string).start(Number(port), webhookUrl);
+const storage = new LocalJSONStorage(dbPath);
+const telegramService = new TelegramBotService(token as string);
+telegramService.setStorage(storage);
+
+new Server(telegramService).start(Number(port), webhookUrl);

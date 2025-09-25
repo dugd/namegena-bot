@@ -5,9 +5,9 @@ export class Server {
     private app = express.application;
     private botService: TelegramBotService;
 
-    constructor(botToken: string) {
+    constructor(telegramBotService: TelegramBotService) {
         this.app = express();
-        this.botService = new TelegramBotService(botToken);
+        this.botService = telegramBotService;
         this.setupMiddlewares();
         this.setupRoutes();
     }

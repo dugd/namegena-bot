@@ -35,7 +35,15 @@ const genCommand: BotCommand = {
             await ctx.reply('Names must contain only alphabetic characters.');
             return;
         }
-        await ctx.reply(`New name: ${generateName(name1, name2)}`);
+        const result = generateName(name1, name2);
+        await ctx.reply(`New name: ${result}`, {
+            reply_to_message_id: ctx.message.message_id,
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: 'Save', callback_data: `save:${name1}:${name2}:${result}` }],
+                ],
+            },
+        });
     },
 };
 
