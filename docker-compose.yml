@@ -16,6 +16,7 @@ services:
     volumes:
       - ./dist:/app/dist
       - ./logs:/app/logs
+      - ./db:/app/db
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${APP_PORT}/health"]

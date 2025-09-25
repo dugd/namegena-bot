@@ -25,7 +25,6 @@ RUN npm ci $(test "$BUILD_ENV" = "production" && echo "--production") && npm cac
 
 COPY --from=build /dist /app/dist
 
-VOLUME [ "/app/db" ]
 EXPOSE 8000
 
 HEALTHCHECK --interval=3s --timeout=3s --start-period=5s --retries=3 \
