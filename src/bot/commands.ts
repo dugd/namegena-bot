@@ -22,6 +22,7 @@ const helpCommand: BotCommand = {
 
 const genCommand: BotCommand = {
     command: 'gen',
+    pattern: /^\/gen\s+.*/,
     description: 'Generate new name based on two names',
     async handler(ctx) {
         const match = ctx.message.text?.match(/^\/gen\s+(\p{L}+)\s+(\p{L}+)\s*$/gu);
